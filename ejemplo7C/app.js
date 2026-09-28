@@ -8,6 +8,7 @@ var logger = require('morgan');
 //Agregas uno nuevo por cada archivo nuevo que vayas a meter en ruta
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+var clientesRouter = require('./routes/clientes');
 
 var app = express();
 
@@ -25,6 +26,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 // lo relacionas con el nombre de la variable que tiene el archivo
 app.use('/api', indexRouter);
 app.use('/api/users', usersRouter);
+app.use('/api/clientes', clientesRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

@@ -1,0 +1,16 @@
+# Dependencias de Node (NUNCA deben subirse a Git)
+node_modules/
+*/node_modules/
+
+# Logs y temporales
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Variables de entorno
+.env
+.env.local
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db

@@ -66,7 +66,6 @@ router.post('/', async (req, res) => {
         if (rows.affectedRows === 1) {
             let envio = {
                 msj: "Registro insertado",
-                rows
             };
             res.status(201).json(envio);
         } else {
@@ -86,7 +85,6 @@ router.put('/', async (req, res) => {
         if (rows.affectedRows === 1) {
             let envio = {
                 msj: "Registro actualizado",
-                rows
             };
             res.json(envio);
         } else {
@@ -114,10 +112,11 @@ router.put('/', async (req, res) => {
 //         if (rows.affectedRows === 1) {
 //             res.json({
 //                 msj: "Registro actualizado",
-//                 id: req.params.id
 //             });
 //         } else {
-//             res.status(404).json({ msj: "No existe un cliente con ese ID" });
+//            let error = {
+//                msj:"Error: No se encontro el registro para actualizar"
+//            }
 //         }
 //     } catch (err) {
 //         console.log(err);
@@ -125,6 +124,7 @@ router.put('/', async (req, res) => {
 //     }
 // });
 
+//este es el delete con params
 router.delete('/:id', async (req, res) => {
     try {
         const [rows] = await db.query('DELETE FROM clientes WHERE ID = ?', [req.params.id]);
@@ -136,9 +136,9 @@ router.delete('/:id', async (req, res) => {
             res.json(envio);
         } else {
             let error = {
-                msj: "Error: No se encontró el registro para eliminar"
+                msj: "Error: No se encontro el registro para eliminar"
             };
-            res.status(404).json(error);
+            res.json(error);
         }
     } catch (err) {
         console.log(err);

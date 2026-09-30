@@ -102,14 +102,14 @@ router.post('/prueba', [
 });
 
 
-//en mi bd no tengo password, voy a encriptar el apellido materno 
+//en mi bd no tengo password, voy a encriptar el password
 router.post('/', async (req, res) => {
   try {
     let salt = await bcrypt.genSalt(10);
-    let passcifrado = await bcrypt.hash(req.body.apellidomaterno, salt);
+    let passcifrado = await bcrypt.hash(req.body.password, salt);
     const [rows] = await db.query(
-      'INSERT INTO empleados (id, nombre, apellidopaterno, apellidomaterno, edad) VALUES (?, ?, ?, ?, ?)',
-      [null, req.body.nombre, req.body.apellidopaterno, passcifrado, req.body.edad]
+      'INSERT INTO empleados (id, nombre, apellidopaterno, apellidomaterno, edad, usuario, password) VALUES (?, ?, ?, ?, ?, ?, ?)',
+      [null, req.body.nombre, req.body.apellidopaterno, req.body.apellidomaterno, req.body.edad, req.body.usuario, passcifrado]
     );
 
     if (rows.affectedRows === 1) {
@@ -171,19 +171,19 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
-router.post('/iniciosesion', (req, res) => {
+router.post('/iniciosesion', async (req, res) => {
   try {
-    const [rows] = await db.query('SELECT * FROM empleados where nombre like ?', [req.params.nombre + '%']);
-    if (!rows) {
-      res.send("Error: usuario y contraseña incorrectos");
+    const [rows] = await db.query('SELECT * FROM empleados where usuario = ?', [req.body.usuario]);
+    if (rows.length === 0) {
+      return res.send("Error: usuario y contraseña incorrectos");
     }
-    if (! await bcrypt.compare(req.body.apellidomaterno, rows[0].apellidomaterno)) {
-      res.send("Error: usuario y contraseña incorrectos");
+    if (! await bcrypt.compare(req.body.password, rows[0].password)) {
+      return res.send("Error: usuario y contraseña incorrectos");
     }
-    res.json(rows);e
+    res.json(rows);
 
   } catch (error) {
-    console.log(err);
+    console.log(error);
     res.status(500).json({ error: 'Error al conectar a la base de datos' });
   }
 });

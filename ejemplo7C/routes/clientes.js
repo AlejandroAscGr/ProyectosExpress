@@ -39,7 +39,6 @@ router.get('/:nombre', async function (req, res, next) {
 // //osea, lo principal es que sea por id, osea un id exacto, 
 // //y si no se encuentra, pues que busque por nombre agregando un % al final
 // // yo creo que quedaria mejor con un if else, pero pues no hay tiempo para pruebas
-// //tons se queda comentado el wey
 // router.get('/:busqueda', async function (req, res, next) {
 //   try {
 //     const [rows] = await db.query(

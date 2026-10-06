@@ -1,4 +1,4 @@
-var express = require('express');
+ var express = require('express');
 const router = express.Router();
 const { body, validationResult } = require('express-validator');
 const db = require('../database/db');
@@ -108,8 +108,8 @@ router.post('/', async (req, res) => {
     let salt = await bcrypt.genSalt(10);
     let passcifrado = await bcrypt.hash(req.body.password, salt);
     const [rows] = await db.query(
-      'INSERT INTO empleados (id, nombre, apellidopaterno, apellidomaterno, edad, usuario, password) VALUES (?, ?, ?, ?, ?, ?, ?)',
-      [null, req.body.nombre, req.body.apellidopaterno, req.body.apellidomaterno, req.body.edad, req.body.usuario, passcifrado]
+      'INSERT INTO empleados (id, nombre, apellidopaterno, apellidomaterno, edad, usuario, password, puesto) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+      [null, req.body.nombre, req.body.apellidopaterno, req.body.apellidomaterno, req.body.edad, req.body.usuario, passcifrado, req.body.puesto]
     );
 
     if (rows.affectedRows === 1) {
@@ -171,21 +171,27 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
-router.post('/iniciosesion', async (req, res) => {
-  try {
-    const [rows] = await db.query('SELECT * FROM empleados where usuario = ?', [req.body.usuario]);
-    if (rows.length === 0) {
-      return res.send("Error: usuario y contraseña incorrectos");
-    }
-    if (! await bcrypt.compare(req.body.password, rows[0].password)) {
-      return res.send("Error: usuario y contraseña incorrectos");
-    }
-    res.json(rows);
-
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ error: 'Error al conectar a la base de datos' });
+router.post('/iniciosesion', async(req,res)=>{
+  try{
+    const [rows] = await db.query('select * from empleados where usuario=?', [req.body.usuario]);
+if (rows.length==0){
+  return res.status(400).send("Usuario y contraseña incorrectos");
+}
+if (!await bcrypt.compare(req.body.password, rows[0].password)){
+   return res.status(400).send("Inicio de sesión incorrecto");
   }
+  let datos= {
+    usuario: rows[0].nombre + " " + rows[0].apellidopaterno,  
+    perfil: rows[0].puesto
+  }
+  res.json(datos);
+  }
+catch(error){
+  console.log(error);
+  res.status(500).json({
+    error: error.message
+  });
+}
 });
 
 module.exports = router;
